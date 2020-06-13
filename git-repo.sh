@@ -28,9 +28,13 @@ function start {
 }
 
 BASE=${1:-origin}
+SUPPORTED_HOSTS=(
+  'github.com'
+  'gitlab.com'
+  'bitbucket.org'
+)
 
-command -v git >/dev/null 2>&1
-[[ ! "$?" == "0" ]] && {
+[ ! command -v git >/dev/null 2>&1 ] && {
   fatal git not found
 }
 
@@ -48,9 +52,16 @@ http_match="^https?://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]"
 
 ssh_match="^git@[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]"
 [[ "${remote}" =~ ${ssh_match} ]] && {
-  host=$(echo "${remote}" | sed -Ene's!git@(github.com|gitlab.com|bitbucket.org):([^/]*)/(.*)(.git?)!\1!p')
-  username=$(echo "${remote}" | sed -Ene's!git@(github.com|gitlab.com|bitbucket.org):([^/]*)/(.*)(.git?)!\2!p')
-  repository=$(echo "${remote}" | sed -Ene's!git@(github.com|gitlab.com|bitbucket.org):([^/]*)/(.*)(.git?)!\3!p')
+  OLD_IFS=${IFS}
+  IFS="|"
+  host=$(echo "${remote}" | sed -Ene "s!git@(${SUPPORTED_HOSTS[*]}):([^/]*)/(.*)(.git?)!\1!p")
+  username=$(echo "${remote}" | sed -Ene "s!git@(${SUPPORTED_HOSTS[*]}):([^/]*)/(.*)(.git?)!\2!p")
+  repository=$(echo "${remote}" | sed -Ene "s!git@(${SUPPORTED_HOSTS[*]}):([^/]*)/(.*)(.git?)!\3!p")
+  IFS=${OLD_IFS}
+
+  [[ -z "${host}" || -z "${username}" || -z "${repository}" ]] && {
+    fatal invalid host, username or repository
+  }
 
   start https://"${host}"/"${username}"/"${repository}".git
   exit 0
