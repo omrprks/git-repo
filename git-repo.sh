@@ -34,11 +34,12 @@ SUPPORTED_HOSTS=(
   'bitbucket.org'
 )
 
-[ ! command -v git >/dev/null 2>&1 ] && {
+command -v git >/dev/null 2>&1 || {
   fatal git not found
 }
 
-[[ ! -d "$(pwd)/.git" ]] && {
+[ -d "$(pwd)/.git" ] || git rev-parse --git-dir > /dev/null 2>&1
+[[ "$?" -ne "0" ]] && {
   fatal not a git repository
 }
 
