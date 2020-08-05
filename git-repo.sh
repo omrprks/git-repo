@@ -55,9 +55,9 @@ ssh_match="^git@[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]"
 [[ "${remote}" =~ ${ssh_match} ]] && {
   OLD_IFS=${IFS}
   IFS="|"
-  host=$(echo "${remote}" | sed -Ene "s!git@(${SUPPORTED_HOSTS[*]}):([^/]*)/(.*)(.git?)!\1!p")
-  username=$(echo "${remote}" | sed -Ene "s!git@(${SUPPORTED_HOSTS[*]}):([^/]*)/(.*)(.git?)!\2!p")
-  repository=$(echo "${remote}" | sed -Ene "s!git@(${SUPPORTED_HOSTS[*]}):([^/]*)/(.*)(.git?)!\3!p")
+  host=$(echo "${remote}" | sed -Ene "s!git@(${SUPPORTED_HOSTS[*]}):([^/]*)/(.*)(.git)?!\1!p")
+  username=$(echo "${remote}" | sed -Ene "s!git@(${SUPPORTED_HOSTS[*]}):([^/]*)/(.*)(.git)?!\2!p")
+  repository=$(echo "${remote}" | sed -Ene "s!git@(${SUPPORTED_HOSTS[*]}):([^/]*)/(.*)(.git)?!\3!p")
   IFS=${OLD_IFS}
 
   [[ -z "${host}" || -z "${username}" || -z "${repository}" ]] && {
