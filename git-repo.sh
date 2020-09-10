@@ -64,7 +64,7 @@ ssh_match="^git@[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]"
     fatal invalid host, username or repository
   }
 
-  start https://"${host}"/"${username}"/"${repository}".git
+  start https://"${host}"/"${username}"/"${repository}"
   exit 0
 }
 
